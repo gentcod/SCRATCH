@@ -5,15 +5,18 @@ import (
 	"log"
 	"os" 
 	"net/http"
+	// "database/sql"
 
 	"github.com/joho/godotenv"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
+	// "github.com/lib/pq"
 )
 
 func main() {
 	godotenv.Load(".env")
 
+	//Configure Port
 	port := os.Getenv("PORT")
 
 	if port == "" {
