@@ -14,8 +14,8 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 	type parameters struct {
 		Name string `json:"name"`
 	}
-	decoder := json.NewDecoder(r.Body)
 
+	decoder := json.NewDecoder(r.Body)
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
