@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (apiCfg *apiConfig) handlerCreateFeeds(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
 		Url string `jsom:"url"`
@@ -41,7 +41,13 @@ func (apiCfg *apiConfig) handlerCreateFeeds(w http.ResponseWriter, r *http.Reque
 	respondWithJson(w, 201, databaseFeedToFeed(feed))
 }
 
-// func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
+	feeds, err := apiCfg.DB.GetFeeds(r.Context())
 
-// 	respondWithJson(w, 200, databaseUserToUser(user))
-// }
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("Couldnt't get feed: %v", err))
+		return
+	}
+
+	respondWithJson(w, 201, databaseFeedsToFeeds(feeds))
+}
