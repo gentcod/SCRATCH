@@ -9,11 +9,10 @@ import (
 	"time"
 
 	database "github.com/gentcod/RSSAggregator/internal/database"
-	db "github.com/gentcod/RSSAggregator/internal/database"
 	"github.com/google/uuid"
 )
 
-func startScraping(db *db.Queries, concurrency int, timeBtwReq time.Duration) {
+func startScraping(db *database.Queries, concurrency int, timeBtwReq time.Duration) {
 	log.Printf("SCraping on %v goroutines every %s duration", concurrency, timeBtwReq)
 	ticker := time.NewTicker(timeBtwReq)
 
