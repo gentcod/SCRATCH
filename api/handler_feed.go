@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
+func (server *Server) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
 		Url string `jsom:"url"`
@@ -24,7 +24,7 @@ func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	feed, err := apiCfg.DB.CreateFeeds(r.Context(), database.CreateFeedsParams{
+	feed, err := server.store.CreateFeeds(r.Context(), database.CreateFeedsParams{
 		ID: uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
@@ -41,8 +41,8 @@ func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Reques
 	respondWithJson(w, 201, databaseFeedToFeed(feed))
 }
 
-func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
-	feeds, err := apiCfg.DB.GetFeeds(r.Context())
+func (server *Server) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
+	feeds, err := server.store.GetFeeds(r.Context())
 
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Couldnt't get feed: %v", err))

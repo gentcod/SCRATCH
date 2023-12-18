@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (apiCfg *apiConfig) handlerCreateFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
+func (server *Server) handlerCreateFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		FeedID uuid.UUID `json:"feed_id"`
 	}
@@ -24,7 +24,7 @@ func (apiCfg *apiConfig) handlerCreateFeedFollows(w http.ResponseWriter, r *http
 		return
 	}
 
-	feedFollow, err := apiCfg.DB.CreateFeedFollow(r.Context(), database.CreateFeedFollowParams{
+	feedFollow, err := server.store.CreateFeedFollow(r.Context(), database.CreateFeedFollowParams{
 		ID: uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
@@ -40,9 +40,9 @@ func (apiCfg *apiConfig) handlerCreateFeedFollows(w http.ResponseWriter, r *http
 	respondWithJson(w, 201, databaseFeedFollowToFeedFollow(feedFollow))
 }
 
-func (apiCfg *apiConfig) handlerGetFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
+func (server *Server) handlerGetFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
 
-	feedFollows, err := apiCfg.DB.GetFeedFollows(r.Context(), user.ID)
+	feedFollows, err := server.store.GetFeedFollows(r.Context(), user.ID)
 
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Couldnt't get feed follow: %v", err))
@@ -52,7 +52,7 @@ func (apiCfg *apiConfig) handlerGetFeedFollows(w http.ResponseWriter, r *http.Re
 	respondWithJson(w, 201, databaseFeedFollowsToFeedFollows(feedFollows))
 }
 
-func (apiCfg *apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
+func (server *Server) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
 	FeedFollowIDStr := chi.URLParam(r, "feedFollowID")
 	feedFollowID, err := uuid.Parse(FeedFollowIDStr)
 	if err != nil {
@@ -60,7 +60,7 @@ func (apiCfg *apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.
 		return
 	}
 
-	err = apiCfg.DB.DeleteFeedFollow(r.Context(), database.DeleteFeedFollowParams{
+	err = server.store.DeleteFeedFollow(r.Context(), database.DeleteFeedFollowParams{
 		ID: feedFollowID,
 		UserID: user.ID,
 	})
